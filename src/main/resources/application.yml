@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: cinema
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cinema
+    username: cinema
+    password: cinema
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
