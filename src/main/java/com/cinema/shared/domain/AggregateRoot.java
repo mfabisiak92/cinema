@@ -13,7 +13,7 @@ public abstract class AggregateRoot {
     }
 
     public List<DomainEvent> pullDomainEvents() {
-        List<DomainEvent> events = Collections.unmodifiableList(domainEvents);
+        List<DomainEvent> events = List.copyOf(domainEvents);
         domainEvents.clear();
         return events;
     }
