@@ -10,12 +10,14 @@ import java.util.List;
 
 public class Reservation extends AggregateRoot {
 
-    private final ReservationId id;
-    private final ScreeningId screeningId;
-    private final CustomerId customerId;
-    private final List<Seat> seats;
-    private final LocalDateTime expiresAt;
+    private ReservationId id;
+    private ScreeningId screeningId;
+    private CustomerId customerId;
+    private List<Seat> seats;
+    private LocalDateTime expiresAt;
     private ReservationStatus status;
+
+    private Reservation() {}
 
     public Reservation(
             ReservationId id,
@@ -41,6 +43,24 @@ public class Reservation extends AggregateRoot {
         this.expiresAt = expiresAt;
         this.status = ReservationStatus.PENDING;
         registerEvent(SeatsReserved.of(this));
+    }
+
+    public static Reservation reconstitute(
+            ReservationId id,
+            ScreeningId screeningId,
+            CustomerId customerId,
+            List<Seat> seats,
+            LocalDateTime expiresAt,
+            ReservationStatus status
+    ) {
+        var reservation = new Reservation();
+        reservation.id = id;
+        reservation.screeningId = screeningId;
+        reservation.customerId = customerId;
+        reservation.seats = List.copyOf(seats);
+        reservation.expiresAt = expiresAt;
+        reservation.status = status;
+        return reservation;
     }
 
     public void confirm() {

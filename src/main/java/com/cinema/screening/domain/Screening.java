@@ -9,11 +9,13 @@ import java.util.List;
 
 public class Screening extends AggregateRoot {
 
-    private final ScreeningId id;
-    private final String movieTitle;
-    private final Hall hall;
-    private final LocalDateTime startTime;
-    private final List<Seat> seats;
+    private ScreeningId id;
+    private String movieTitle;
+    private Hall hall;
+    private LocalDateTime startTime;
+    private List<Seat> seats;
+
+    private Screening() {}
 
     public Screening(ScreeningId id, String movieTitle, Hall hall, LocalDateTime startTime) {
         if (movieTitle == null || movieTitle.isBlank()) {
@@ -28,6 +30,17 @@ public class Screening extends AggregateRoot {
         this.startTime = startTime;
         this.seats = new ArrayList<>(hall.seats());
         registerEvent(ScreeningCreated.of(this));
+    }
+
+    public static Screening reconstitute(
+            ScreeningId id, String movieTitle, Hall hall, LocalDateTime startTime, List<Seat> seats) {
+        var screening = new Screening();
+        screening.id = id;
+        screening.movieTitle = movieTitle;
+        screening.hall = hall;
+        screening.startTime = startTime;
+        screening.seats = new ArrayList<>(seats);
+        return screening;
     }
 
     public void reserveSeat(int row, int number) {
