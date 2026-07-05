@@ -1,12 +1,9 @@
 package com.cinema;
 
-import org.junit.jupiter.api.Tag;
+import com.cinema.shared.infrastructure.PostgreSQLIntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@Tag("integration")
-@SpringBootTest
-class CinemaApplicationTest {
+class CinemaApplicationTest extends PostgreSQLIntegrationTest {
 
     @Test
     void contextLoads() {
