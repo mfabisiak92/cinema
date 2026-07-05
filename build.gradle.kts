@@ -17,13 +17,17 @@ repositories {
     mavenCentral()
 }
 
-val testcontainersVersion = "1.20.4"
+val testcontainersVersion = "1.21.1"
+extra["testcontainers.version"] = testcontainersVersion
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
 
     runtimeOnly("org.postgresql:postgresql")
 
@@ -32,7 +36,7 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:${testcontainersVersion}")
 }
 
-tasks.withType<Test> {
+tasks.named<Test>("test") {
     useJUnitPlatform {
         excludeTags("integration")
     }
@@ -43,4 +47,6 @@ tasks.register<Test>("integrationTest") {
         includeTags("integration")
     }
     shouldRunAfter("test")
+    systemProperty("api.version", "1.44")
+    environment("TESTCONTAINERS_RYUK_DISABLED", "true")
 }
