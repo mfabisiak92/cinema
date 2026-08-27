@@ -6,6 +6,7 @@ import com.cinema.reservation.domain.CustomerId;
 import com.cinema.reservation.domain.ReservationId;
 import com.cinema.screening.domain.ScreeningId;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,10 @@ class ReservationController {
 
     @PostMapping
     @Operation(summary = "Reserve seats for a screening")
+    @ApiResponse(responseCode = "201", description = "Reservation created; expires in 15 minutes if not confirmed")
+    @ApiResponse(responseCode = "400", description = "Invalid request body")
+    @ApiResponse(responseCode = "404", description = "Screening not found")
+    @ApiResponse(responseCode = "422", description = "Seat not available")
     ResponseEntity<ReservationResponse> reserve(@Valid @RequestBody ReservationRequest request) {
         List<ReserveSeatUseCase.SeatPosition> seats = request.seats().stream()
                 .map(s -> new ReserveSeatUseCase.SeatPosition(s.row(), s.number()))
@@ -51,6 +56,9 @@ class ReservationController {
 
     @PostMapping("/{id}/confirm")
     @Operation(summary = "Confirm a pending reservation")
+    @ApiResponse(responseCode = "204", description = "Reservation confirmed")
+    @ApiResponse(responseCode = "404", description = "Reservation not found")
+    @ApiResponse(responseCode = "409", description = "Reservation already expired")
     ResponseEntity<Void> confirm(@PathVariable UUID id) {
         confirmReservationUseCase.execute(new ConfirmReservationUseCase.Command(new ReservationId(id)));
         return ResponseEntity.noContent().build();
